@@ -1,0 +1,7 @@
+{
+  "name": "x-gesture-handle#gh-pages",
+  "private": true,
+  "dependencies": {
+    "x-gesture-handle": "iamlothian/x-gesture-handle#master"
+  }
+}

@@ -1,0 +1,147 @@
+<!--
+		@license
+		Copyright (c) 2014 The Polymer Project Authors. All rights reserved.
+		This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+		The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+		The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+		Code distributed by Google as part of the polymer project is also
+		subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+<link rel="import" href="../polymer/polymer.html">
+<!--
+An element wraps the `polymerGesture` functionality and give you access to the events as attributes and extendables function on an element
+
+##### Example
+
+		<x-gesture-handle on-tap="tapHandler">
+			<some-element>...</some-element>
+		</x-gesture-handle>
+
+the exposed list of gesture events are:
+
+		var polymerGesturesList = [
+			// a pointer is activated, or a device button held.
+			'down',		
+			// a pointer is deactivated, or a device button released. 
+			// Same target as down, provides the element under the 
+			// pointer with the relatedTarget property	
+			'up',			
+			// denotes the beginning of a series of tracking events. 
+			// Same target as down.
+			'trackstart',	
+			// fires for all pointer movement being tracked.
+			'track',		
+			// denotes the end of a series of tracking events. 
+			// Same target as down. Provides the element under 
+			// the pointer with the relatedTarget property.
+			'trackend',		
+			// a pointer has quickly gone down and up. Used to denote activation.
+			'tap',
+			// a pointer is held down for 200ms.			
+			'hold',
+			// fired every 200ms while a pointer is held down.			
+			'holdpulse',
+			// a pointer is released or moved.	
+			'release'		
+		];
+
+The events are available using the `on` prefix like `on-tap='tapHandler'`
+
+If you are extending the element you can use the same syntax with in the polymer constructor.
+
+		'on-tap': function(e){ ... }
+
+Make sure to call `this.super()` in the `ready` callback if you are extending the element.
+
+@element x-gesture-handle
+@blurb An element that automaticly sizes itself baced on the parent containers width and the supplied aspect ratio.
+@status alpha
+@homepage 
+-->
+<polymer-element name="x-gesture-handle" attributes="on-down on-up on-trackstart on-track on-trackend on-tap on-hold on-hold-pulse on-release">
+
+  <template>
+	<content></content>
+  </template>
+
+  <script>
+
+  	(function(polymerGesturesList){
+
+		// TODO: make injectable
+		var polymerGesturesList = polymerGesturesList || [
+			// base events
+			'down',			// a pointer is activated, or a device button held.
+			'up',			// a pointer is deactivated, or a device button released. Same target as down, provides the element under the pointer with the relatedTarget property
+			'trackstart',	// denotes the beginning of a series of tracking events. Same target as down.
+			'track',		// fires for all pointer movement being tracked.
+			'trackend',		// denotes the end of a series of tracking events. Same target as down. Provides the element under the pointer with the relatedTarget property.
+			'tap',			// a pointer has quickly gone down and up. Used to denote activation.
+			'hold',			// a pointer is held down for 200ms.
+			'holdpulse',	// fired every 200ms while a pointer is held down.
+			'release'		// a pointer is released or moved.
+		];
+			
+		var _noop = function(){};
+
+		Polymer({
+
+			_handle_fn_prefix: 'on-',
+
+			publish: {
+				scope: undefined
+			},
+
+			ready: function(){
+
+				var _self = this;
+				this._handlePolymerGestures = function(e) {
+					_self.handlePolymerGesture.call(_self, e);
+				};
+
+				// add event listeners for PolymerGestures
+				polymerGesturesList.forEach(function(en) {
+
+					var onHandler = _self._handle_fn_prefix + en;
+
+					// if both attribute and prototype handlers are defined check they match
+					if (!!_self.attributes[onHandler] && !!_self[onHandler] && (_self.attributes[onHandler].value !== _self[onHandler])){
+						console.warn('The ' + onHandler + ' has been bound both by an attribute and element prototype, this may cause unpredictable behaviour.')
+					}
+
+					_self[onHandler] = _self[onHandler] || _noop;
+
+					PolymerGestures.addEventListener(_self, en, _self._handlePolymerGestures);
+				});
+
+			},
+
+			handlePolymerGesture: function(e) {
+
+				var handler = this[this._handle_fn_prefix + e.type];
+
+				if(!!handler && handler !== _noop) { 
+					// handler is a function on the polymer constructor prototype
+					if (Object.prototype.toString.call(handler) === '[object Function]'){
+						handler.call(this, e);
+					} 
+					// handler is an attribute string, look for the property in scope or window
+					else {
+						if (!!this.scope && !!this.scope[handler]){
+							this.scope[handler].call(this, e);
+						} else {
+							(this[handler] || window[handler] || _noop).call(this, e);
+						}
+					}
+				}
+
+			}
+
+		});
+
+	})(null); // decide on a way to inject modules into these so things can be defined once
+
+
+  </script>
+
+</polymer-element>

@@ -1,0 +1,36 @@
+{
+  "name": "x-gesture-handle",
+  "authors": [
+    "Anonymous <anonymous@example.com>"
+  ],
+  "description": "Element providing solution to no problem in particular.",
+  "keywords": [
+    "web-component",
+    "web-components",
+    "polymer",
+    "seed"
+  ],
+  "main": "x-gesture-handle.html",
+  "license": "MIT",
+  "homepage": "https://github.com/<USERNAME>/x-gesture-handle/",
+  "ignore": [
+    "/.*",
+    "/tests/"
+  ],
+  "dependencies": {
+    "polymer": "Polymer/polymer#^0.5.2"
+  },
+  "devDependencies": {
+    "web-component-tester": "Polymer/web-component-tester#^2.0.5"
+  },
+  "_release": "f917903e5f",
+  "_resolution": {
+    "type": "branch",
+    "branch": "master",
+    "commit": "f917903e5f2327ad393e9d40b1deef1e4d724644"
+  },
+  "_source": "git://github.com/iamlothian/x-gesture-handle.git",
+  "_target": "master",
+  "_originalSource": "iamlothian/x-gesture-handle",
+  "_direct": true
+}
